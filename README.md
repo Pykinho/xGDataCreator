@@ -1,2 +1,2 @@
 # xGDataCreator
-a tool for creating football shot  data and statistics
+a tool for creating football shots data and statistics
