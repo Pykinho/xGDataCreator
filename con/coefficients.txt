@@ -1,0 +1,7 @@
+[official]
+intercept = 1.2070
+angle = -1.7024
+distance = 0.1046
+intercept_h = 1.6275
+angle_h = -1.3116
+distance_h = 0.1353

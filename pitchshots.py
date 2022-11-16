@@ -2,10 +2,14 @@
 
 import tkinter as tk
 from shot import Shot
-pitch_size = 7
+from config import Config
+
+
+config = Config('./con/pitchsize.txt')
+pitch_size = int(config.pitch_size)
 
 class PitchShots(tk.Canvas):
-    def __init__(self, master=None, **kwargs):
+    def __init__(self,master=None, **kwargs):
         super().__init__(master, **kwargs)
         self.shots_locations = []
         self.team = 'HOME'

@@ -6,21 +6,25 @@ import numpy as np
 import pandas as pd
 import os
 
+
 from pitchshots import PitchShots
 from lastshot import LastShot
 from teamchoice import TeamChoice
 from shotcategory import ShotCategory
 from shoteffect import ShotEffect
 from shotstable import ShotsTable
+from config import Config
         
 # GUI etc
 class xGStatsCreator(tk.Frame):
     def __init__(self, master=None, **kwargs):
         super().__init__(master, **kwargs)
 
+        self.config = Config('./con/coefficients.txt')
+
         self.shots_info = pd.DataFrame(columns=['Category','Team','X','Y','Distance','Angle','XG','Goal'])
         self.pitch_shots = PitchShots(self)
-        self.pitch_shots.grid(row=0, column=1, rowspan=4,columnspan=2,pady=20)
+        self.pitch_shots.grid(row=0, column=1, rowspan=3,columnspan=2,pady=20)
 
         self.teams = TeamChoice(self)
         self.teams.grid(row=0,column=0,sticky='ew',padx=20,pady=20)
@@ -32,7 +36,7 @@ class xGStatsCreator(tk.Frame):
         self.goal_effect.grid(row=2,column=0,sticky='ew',padx=20,pady=20)
 
         self.stats = LastShot(self)
-        self.stats.grid(row=0, column=3,sticky='ew',rowspan=3,padx=20,pady=20)
+        self.stats.grid(row=1, column=3,sticky='ew',rowspan=1,padx=20,pady=20)
 
         self.home_shots_table = ShotsTable(self)
         self.home_shots_table.grid(row=4,column=1,sticky='ew',padx=20,pady=20)
@@ -84,10 +88,10 @@ class xGStatsCreator(tk.Frame):
                 self.shots_info.loc[(self.shots_info.Angle <=0) & (self.shots_info.Distance <= 3.66), 'Angle' ] += np.pi
 
 
-                self.shots_info.loc[self.shots_info.Category == 'OPEN PLAY','XG'] = 1/(1+np.exp(1.2 - 1.7*self.shots_info.Angle.iloc[-1] + 
-                                                                0.1*self.shots_info.Distance.iloc[-1]))
-                self.shots_info.loc[self.shots_info.Category == 'HEADER','XG'] = 1/(1+np.exp(1.63 - 1.31*self.shots_info.Angle.iloc[-1] + 
-                                                                0.14*self.shots_info.Distance.iloc[-1]))
+                self.shots_info.loc[self.shots_info.Category == 'OPEN PLAY','XG'] = 1/(1+np.exp(float(self.config.intercept) + float(self.config.angle)*self.shots_info.Angle.iloc[-1] + 
+                                                                float(self.config.distance)*self.shots_info.Distance.iloc[-1]))
+                self.shots_info.loc[self.shots_info.Category == 'HEADER','XG'] = 1/(1+np.exp(float(self.config.intercept_h) + float(self.config.angle_h)*self.shots_info.Angle.iloc[-1] + 
+                                                                float(self.config.distance_h)*self.shots_info.Distance.iloc[-1]))
                 self.shots_info.loc[self.shots_info.Category == 'PENALTY KICK','XG'] = 0.76
                 
                 
